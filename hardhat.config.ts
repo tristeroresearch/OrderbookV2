@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-ethers");
+require('@nomicfoundation/hardhat-verify');
 require("hardhat-deploy");
 require("dotenv").config();
 
@@ -66,7 +67,69 @@ module.exports = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    sepolia: {
+      // gasPrice: 3e1,
+      chainId: 11155111,
+      gas: 2e11,
+      gasLimit: 2e11,
+      url: process.env['SEPOLIA_RPC'] || '',
+      accounts: process.env['TESTNET_PRIVKEY']
+        ? [process.env['TESTNET_PRIVKEY']]
+        : [],
+    },
+    mantle: {
+      // gasPrice: 3e1,
+      chainId: 5000,
+      gas: 2e9,
+      gasLimit: 2e9,
+      url: process.env['MANTLE_RPC'] || '',
+      accounts: process.env['PRIVATE_KEY']
+        ? [process.env['PRIVATE_KEY']]
+        : [],
+    },
     // Add other networks as needed
+  },
+  etherscan: {
+    apiKey: {
+      sepolia: process.env['ETHERSCAN_API_KEY'],
+      mainnet: process.env['ETHERSCAN_API_KEY'],
+      arbitrumOne: process.env['ARBISCAN_API_KEY'],
+      bsc: process.env['BSCSCAN_API_KEY'],
+      base: process.env['BASESCAN_API_KEY'],
+      blast: process.env['BLASTSCAN_API_KEY'],
+      mantle: process.env['MANTLESCAN_API_KEY']
+    },
+    sourcify: {
+      // Disabled by default
+      // Doesn't need an API key
+      enabled: true
+    },
+    customChains: [
+      {
+        network: "base",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: process.env['BASE_MAINNET_EXPLORER_URL']
+        }
+      },
+      {
+        network: "blast",
+        chainId: 81457,
+        urls: {
+          apiURL: "https://api.blastscan.io/api",
+          browserURL: process.env['BLAST_MAINNET_EXPLORER_URL']
+        }
+      },
+      {
+        network: "mantle",
+        chainId: 5000,
+        urls: {
+          apiURL: "https://api.mantlescan.xyz/api",
+          browserURL: process.env['MANTLE_EXPLORER_URL']
+        }
+      }
+    ]
   },
   namedAccounts: {
     deployer: {
