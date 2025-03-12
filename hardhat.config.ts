@@ -80,8 +80,8 @@ module.exports = {
     mantle: {
       // gasPrice: 3e1,
       chainId: 5000,
-      gas: 2e9,
-      gasLimit: 2e9,
+      gas: 2e11,
+      gasLimit: 2e11,
       url: process.env['MANTLE_RPC'] || '',
       accounts: process.env['PRIVATE_KEY']
         ? [process.env['PRIVATE_KEY']]
