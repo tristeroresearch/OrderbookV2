@@ -23,13 +23,16 @@ const ENCRYPTED_WALLET = JSON.parse(process.env.ENCRYPTED_WALLET)
 // const CHAIN_NAME = 'Sepolia'
 // const HARDHAT_NETWORK_NAME = 'sepolia'
 
-const RPC_URL = process.env.MANTLE_RPC
-const EXPLORER_URL = process.env.MANTLE_EXPLORER_URL
+const RPC_URL = process.env.APE_RPC
+const EXPLORER_URL = process.env.APE_EXPLORER_URL
 const CONTRACT_NAME = "Orderbook"
-const CHAIN_CURRENCY = 'MNT'
-const CHAIN_NAME = 'Mantle'
-const HARDHAT_NETWORK_NAME = 'mantle'
-// Mantle deployed to https://mantlescan.xyz/address/0xcF46728E4d3613Bcde64EC3B3d6c1565eD92664f#code
+const CHAIN_CURRENCY = 'APE'
+const CHAIN_NAME = 'ApeChain'
+const HARDHAT_NETWORK_NAME = 'apechain'
+const LZ_ENDPOINT = "0x6F475642a6e85809B1c36Fa62763669b1b48DD5B"
+const LZ_EID = 30312
+// Mantle deployment https://mantlescan.xyz/address/0xcF46728E4d3613Bcde64EC3B3d6c1565eD92664f#code
+// Apechain deployment: https://apescan.io/address/0xE15f0BD64033cCCD807129D98732392C7aebceD6#code
 
 const main = async () => {
     const provider = new ethers.providers.JsonRpcProvider({ url: RPC_URL, timeout: 600000 });
@@ -45,10 +48,10 @@ const main = async () => {
     const Constructor = (await hardhat.ethers.getContractFactory(CONTRACT_NAME)).connect(deployer_wallet);
 
     const ConstructorArgs = [
-        "0x1a44076050125825900e736c501f859c50fE728c",  // Replace with actual endpoint address if needed
+        LZ_ENDPOINT,  // Replace with actual endpoint address if needed
         "0x451F52446EBD4376d4a05f4267eF1a03Acf1aAf4",  // OApp Owner address
         "0x033a1B4b586EFc07f7377c522E693fd855a505b1",  // Contract Owner address
-        30181,                                         // Replace with actual LayerZero EID if needed
+        LZ_EID,                                         // Replace with actual LayerZero EID if needed
     ];
 
     console.log(`Will ${CONTRACT_NAME} on ${CHAIN_NAME} with args:`, ConstructorArgs);

@@ -87,6 +87,16 @@ module.exports = {
         ? [process.env['PRIVATE_KEY']]
         : [],
     },
+    apechain: {
+      // gasPrice: 3e1,
+      chainId: 33139,
+      gas: 2e11,
+      gasLimit: 2e11,
+      url: process.env['APE_RPC'] || '',
+      accounts: process.env['PRIVATE_KEY']
+        ? [process.env['PRIVATE_KEY']]
+        : [],
+    },
     // Add other networks as needed
   },
   etherscan: {
@@ -97,7 +107,8 @@ module.exports = {
       bsc: process.env['BSCSCAN_API_KEY'],
       base: process.env['BASESCAN_API_KEY'],
       blast: process.env['BLASTSCAN_API_KEY'],
-      mantle: process.env['MANTLESCAN_API_KEY']
+      mantle: process.env['MANTLESCAN_API_KEY'],
+      apechain: process.env['APESCAN_API_KEY']
     },
     sourcify: {
       // Disabled by default
@@ -127,6 +138,14 @@ module.exports = {
         urls: {
           apiURL: "https://api.mantlescan.xyz/api",
           browserURL: process.env['MANTLE_EXPLORER_URL']
+        }
+      },
+      {
+        network: "apechain",
+        chainId: 33139,
+        urls: {
+          apiURL: "https://api.apescan.io/api",
+          browserURL: process.env['APE_EXPLORER_URL']
         }
       }
     ]
