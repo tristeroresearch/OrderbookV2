@@ -29,7 +29,7 @@ const CONTRACT_NAME = "Orderbook"
 const CHAIN_CURRENCY = 'MNT'
 const CHAIN_NAME = 'Mantle'
 const HARDHAT_NETWORK_NAME = 'mantle'
-// Mantle deployed to https://mantlescan.xyz/address/0xb5CA6093A6bc5b036044B06152aC178AaBd009C6#code
+// Mantle deployed to https://mantlescan.xyz/address/0xcF46728E4d3613Bcde64EC3B3d6c1565eD92664f#code
 
 const main = async () => {
     const provider = new ethers.providers.JsonRpcProvider({ url: RPC_URL, timeout: 600000 });
