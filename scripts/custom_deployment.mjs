@@ -100,7 +100,7 @@ const transfer_contract_ownership = async () => {
             gasLimit = manualGasInput ? ethers.BigNumber.from(manualGasInput) : ethers.BigNumber.from("2000000");
         }
         console.log("Sending transaction to transfer ownership...");
-        const tx = await contract.transferOwnership(newOwnerAddress);
+        const tx = await contract.transferOwnership(newOwnerAddress, { gasLimit });
         console.log("Waiting for transaction confirmation...");
         await tx.wait();
         console.log(`Ownership transferred. Check transaction: ${EXPLORER_URL}/tx/${tx.hash}`);
