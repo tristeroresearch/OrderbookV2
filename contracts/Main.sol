@@ -22,7 +22,7 @@ contract Orderbook is OApp, OAppOptionsType3, TradeInterface, ReentrancyGuard {
     uint16                    private constant SEND = 1;
     uint16                    public maxFee = 1001;
     //Constructor
-    constructor(address _endpoint, address _owner, uint32 _lzEid) OApp(_endpoint, _owner) Ownable(msg.sender) {
+    constructor(address _endpoint, address _OAppOwner, address _contractOwner, uint32 _lzEid) OApp(_endpoint, _OAppOwner) Ownable(_contractOwner) {
         srcLzc = _lzEid;
     }
     
