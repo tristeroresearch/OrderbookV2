@@ -8,9 +8,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   
     const args = [
-      "0x1a44076050125825900e736c501f859c50fE728c", // Replace with actual endpoint address if needed
-      deployer,                      // Owner address
-      30110,            // Replace with actual LayerZero EID if needed
+      // LayerZero Endpoint address
+      "0x1a44076050125825900e736c501f859c50fE728c",
+
+      // OApp Owner address
+      "0x451F52446EBD4376d4a05f4267eF1a03Acf1aAf4",
+
+      // Contract owner address
+      deployer, 
+      
+      // LayerZero EID
+      30110,            
     ];
   
     await deploy("Orderbook", {

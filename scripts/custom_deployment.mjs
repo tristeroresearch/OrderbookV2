@@ -46,7 +46,8 @@ const main = async () => {
 
     const ConstructorArgs = [
         "0x1a44076050125825900e736c501f859c50fE728c",  // Replace with actual endpoint address if needed
-        "0x033a1B4b586EFc07f7377c522E693fd855a505b1",  // Owner address
+        "0x451F52446EBD4376d4a05f4267eF1a03Acf1aAf4",  // OApp Owner address
+        "0x033a1B4b586EFc07f7377c522E693fd855a505b1",  // Contract Owner address
         30181,                                         // Replace with actual LayerZero EID if needed
     ];
 
