@@ -15,9 +15,9 @@ import "../lib/permit2/interfaces/ISignatureTransfer.sol";
  *         internally so your Python script only has to sign once and push the
  *         raw bytes.
  *
- *         – direction.srcAsset       → token being spent  
- *         – funding.srcQuantity      → amount being moved & requestedAmount  
- *         – filler                   → final recipient (`to`)  
+ *         – direction.srcAsset       → token being spent
+ *         – funding.srcQuantity      → amount being moved & requestedAmount
+ *         – filler                   → final recipient (`to`)
  */
 contract TestPermit2 {
     /* --------------------------------------------------------------------- */
@@ -27,15 +27,15 @@ contract TestPermit2 {
     struct OrderDirection {
         address srcAsset;
         bytes32 dstAsset;
-        uint32  dstLzc;
+        uint32 dstLzc;
     }
 
     struct OrderFunding {
-        uint96  srcQuantity;
-        uint96  dstQuantity;
-        uint16  bondFee;
+        uint96 srcQuantity;
+        uint96 dstQuantity;
+        uint16 bondFee;
         address bondAsset;
-        uint96  bondAmount;
+        uint96 bondAmount;
     }
 
     struct OrderExpiration {
@@ -44,21 +44,31 @@ contract TestPermit2 {
         uint16 challengeWindow;
     }
 
+    struct PermitParams {
+        address sender;
+        uint256 nonce;
+        uint256 deadline;
+        bytes signature;
+    }
+
     /* --------------------------------------------------------------------- */
     /*                        EIP-712 TYPEHASH CONSTANTS                     */
     /* --------------------------------------------------------------------- */
 
-    bytes32 private constant _ORDER_DIRECTION_TYPEHASH = keccak256(
-        "OrderDirection(address srcAsset,bytes32 dstAsset,uint32 dstLzc)"
-    );
+    bytes32 private constant _ORDER_DIRECTION_TYPEHASH =
+        keccak256(
+            "OrderDirection(address srcAsset,bytes32 dstAsset,uint32 dstLzc)"
+        );
 
-    bytes32 private constant _ORDER_FUNDING_TYPEHASH = keccak256(
-        "OrderFunding(uint96 srcQuantity,uint96 dstQuantity,uint16 bondFee,address bondAsset,uint96 bondAmount)"
-    );
+    bytes32 private constant _ORDER_FUNDING_TYPEHASH =
+        keccak256(
+            "OrderFunding(uint96 srcQuantity,uint96 dstQuantity,uint16 bondFee,address bondAsset,uint96 bondAmount)"
+        );
 
-    bytes32 private constant _ORDER_EXPIRATION_TYPEHASH = keccak256(
-        "OrderExpiration(uint32 timestamp,uint16 challengeOffset,uint16 challengeWindow)"
-    );
+    bytes32 private constant _ORDER_EXPIRATION_TYPEHASH =
+        keccak256(
+            "OrderExpiration(uint32 timestamp,uint16 challengeOffset,uint16 challengeWindow)"
+        );
 
     // Full definition with referenced sub-structs appended, per EIP-712 rules
     string private constant _ORDER_WITNESS_TYPESTRING =
@@ -68,7 +78,69 @@ contract TestPermit2 {
         "OrderExpiration(uint32 timestamp,uint16 challengeOffset,uint16 challengeWindow)"
         "TokenPermissions(address token,uint256 amount)";
 
-    bytes32 private constant _ORDER_WITNESS_TYPEHASH = keccak256(bytes(_ORDER_WITNESS_TYPESTRING));
+    bytes32 private constant _ORDER_WITNESS_TYPEHASH =
+        keccak256(bytes(_ORDER_WITNESS_TYPESTRING));
+
+    function _calcWitnessHash(
+        address sender,
+        OrderDirection calldata d,
+        OrderFunding calldata f,
+        OrderExpiration calldata e,
+        bytes32 target,
+        address filler
+    ) private pure returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    _ORDER_WITNESS_TYPEHASH,
+                    sender,
+                    keccak256(
+                        abi.encode(
+                            _ORDER_DIRECTION_TYPEHASH,
+                            d.srcAsset,
+                            d.dstAsset,
+                            d.dstLzc
+                        )
+                    ),
+                    keccak256(
+                        abi.encode(
+                            _ORDER_FUNDING_TYPEHASH,
+                            f.srcQuantity,
+                            f.dstQuantity,
+                            f.bondFee,
+                            f.bondAsset,
+                            f.bondAmount
+                        )
+                    ),
+                    keccak256(
+                        abi.encode(
+                            _ORDER_EXPIRATION_TYPEHASH,
+                            e.timestamp,
+                            e.challengeOffset,
+                            e.challengeWindow
+                        )
+                    ),
+                    target,
+                    filler
+                )
+            );
+    }
+
+    function _forwardToPermit2(
+        ISignatureTransfer.PermitTransferFrom memory permit,
+        ISignatureTransfer.SignatureTransferDetails memory xfer,
+        PermitParams calldata p,
+        bytes32 witnessHash
+    ) private {
+        PERMIT2.permitWitnessTransferFrom(
+            permit,
+            xfer,
+            p.sender,
+            witnessHash,
+            _ORDER_WITNESS_TYPESTRING,
+            p.signature
+        );
+    }
 
     /* --------------------------------------------------------------------- */
     /*                         IMMUTABLE PERMIT2 ADDRESS                     */
@@ -86,7 +158,7 @@ contract TestPermit2 {
     /* --------------------------------------------------------------------- */
 
     event WitnessTransferExecuted(
-        address indexed owner,
+        address indexed sender,
         address indexed to,
         address indexed token,
         uint256 amount
@@ -96,79 +168,46 @@ contract TestPermit2 {
     /*                       MAIN ENTRY FOR YOUR PYTHON CALL                 */
     /* --------------------------------------------------------------------- */
     function testSigTransfer(
-        OrderDirection memory direction,
-        OrderFunding   memory funding,
-        OrderExpiration memory expiration,
-        bytes32         target,
-        address         filler,
-        bytes calldata  signature
+        PermitParams calldata p,
+        OrderDirection calldata d,
+        OrderFunding calldata f,
+        OrderExpiration calldata e,
+        bytes32 target,
+        address filler
     ) external {
-        /* ----------------------- 1. Build witness hash -------------------- */
-
-        bytes32 witnessHash = keccak256(
-            abi.encode(
-                _ORDER_WITNESS_TYPEHASH,
-                /* sender   */ msg.sender,
-                /* direction*/ keccak256(
-                    abi.encode(
-                        _ORDER_DIRECTION_TYPEHASH,
-                        direction.srcAsset,
-                        direction.dstAsset,
-                        direction.dstLzc
-                    )
-                ),
-                /* funding  */ keccak256(
-                    abi.encode(
-                        _ORDER_FUNDING_TYPEHASH,
-                        funding.srcQuantity,
-                        funding.dstQuantity,
-                        funding.bondFee,
-                        funding.bondAsset,
-                        funding.bondAmount
-                    )
-                ),
-                /* expiration */ keccak256(
-                    abi.encode(
-                        _ORDER_EXPIRATION_TYPEHASH,
-                        expiration.timestamp,
-                        expiration.challengeOffset,
-                        expiration.challengeWindow
-                    )
-                ),
-                /* target */ target,
-                /* filler */ filler
-            )
+        bytes32 witnessHash = _calcWitnessHash(
+            p.sender,
+            d,
+            f,
+            e,
+            target,
+            filler
         );
 
-        /* ----------------------- 2. Build Permit2 args -------------------- */
-        ISignatureTransfer.TokenPermissions memory permitted = ISignatureTransfer.TokenPermissions({
-            token:  direction.srcAsset,
-            amount: uint160(funding.srcQuantity)         // down-cast (safe: srcQuantity ≤ 2¹⁶⁰-1 ?)
-        });
-        // (a) permit = what is allowed to be spent
-        ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer.PermitTransferFrom({
-            permitted: permitted,
-            nonce: 0,
-            deadline: type(uint256).max
-        });
+        ISignatureTransfer.PermitTransferFrom memory permit = ISignatureTransfer
+            .PermitTransferFrom({
+                permitted: ISignatureTransfer.TokenPermissions({
+                    token: d.srcAsset,
+                    amount: f.srcQuantity
+                }),
+                nonce: p.nonce,
+                deadline: p.deadline
+            });
 
-        // (b) transferDetails = where the tokens should end up
-        ISignatureTransfer.SignatureTransferDetails memory xfer = ISignatureTransfer.SignatureTransferDetails({
-            to: filler,
-            requestedAmount: funding.srcQuantity
-        });
+        ISignatureTransfer.SignatureTransferDetails
+            memory xfer = ISignatureTransfer.SignatureTransferDetails({
+                to: filler,
+                requestedAmount: f.srcQuantity
+            });
 
-        /* -------------------- 3. Forward to Permit2 ----------------------- */
-        PERMIT2.permitWitnessTransferFrom(
-            permit,
-            xfer,
-            /* owner   */ msg.sender,
-            /* witness */ witnessHash,
-            /* typeStr */ _ORDER_WITNESS_TYPESTRING,
-            /* sig     */ signature
+        _forwardToPermit2(permit, xfer, p, witnessHash);
+
+        emit WitnessTransferExecuted(
+            p.sender,
+            filler,
+            d.srcAsset,
+            f.srcQuantity
         );
-
-        emit WitnessTransferExecuted(msg.sender, filler, direction.srcAsset, funding.srcQuantity);
     }
 
     /* ------------------- optional: token rescue helper ------------------- */

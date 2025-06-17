@@ -51,6 +51,7 @@ module.exports = {
       url: process.env.BASE_RPC || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      gasLimit: 2e11,
     },
     avalanche_mainnet: {
       url: process.env.AVALANCHE_MAINNET_URL || "",
