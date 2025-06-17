@@ -7,7 +7,8 @@
 		"halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
 		"solidity-examples/=lib/solidity-examples/contracts/",
 		"LayerZero-v2/=lib/LayerZero-v2/",
-		"openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/"
+		"openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+		"@permit2/=lib/permit2/"
 	],
 	"optimizer": {
 		"enabled": true,

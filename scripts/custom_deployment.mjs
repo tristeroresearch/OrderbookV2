@@ -48,7 +48,7 @@ const main = async () => {
     const Constructor = (await hardhat.ethers.getContractFactory(CONTRACT_NAME)).connect(deployer_wallet);
 
     const ConstructorArgs = [
-        LZ_ENDPOINT,  // Replace with actual endpoint address if needed
+        LZ_ENDPOINT,                                    // Replace with actual endpoint address if needed
         "0x451F52446EBD4376d4a05f4267eF1a03Acf1aAf4",  // OApp Owner address
         "0x033a1B4b586EFc07f7377c522E693fd855a505b1",  // Contract Owner address
         LZ_EID,                                         // Replace with actual LayerZero EID if needed

@@ -48,7 +48,7 @@ module.exports = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     base_mainnet: {
-      url: process.env.BASE_MAINNET_URL || "",
+      url: process.env.BASE_RPC || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
@@ -121,7 +121,7 @@ module.exports = {
         chainId: 8453,
         urls: {
           apiURL: "https://api.basescan.org/api",
-          browserURL: process.env['BASE_MAINNET_EXPLORER_URL']
+          browserURL: process.env['BASE_EXPLORER_URL']
         }
       },
       {
@@ -129,7 +129,7 @@ module.exports = {
         chainId: 81457,
         urls: {
           apiURL: "https://api.blastscan.io/api",
-          browserURL: process.env['BLAST_MAINNET_EXPLORER_URL']
+          browserURL: process.env['BLAST_EXPLORER_URL']
         }
       },
       {
