@@ -19,7 +19,7 @@ const ENCRYPTED_WALLET = JSON.parse(process.env.ENCRYPTED_WALLET)
 // Network configuration - can be adjusted as needed
 const RPC_URL = process.env.BASE_RPC
 const EXPLORER_URL = process.env.BASE_EXPLORER_URL
-const CONTRACT_NAME = "TestPermit2"
+const CONTRACT_NAME = "DebugPermit2"
 const CHAIN_CURRENCY = 'ETH'
 const CHAIN_NAME = 'Base'
 const HARDHAT_NETWORK_NAME = 'base_mainnet'
