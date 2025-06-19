@@ -134,6 +134,7 @@ contract DebugPermit2 {
         ISignatureTransfer.PermitTransferFrom memory permit,
         bytes32 witness,
         string calldata witnessTypeString,
+        address spender,
         address owner,
         bytes calldata signature
     ) public view returns (
@@ -146,7 +147,7 @@ contract DebugPermit2 {
         bytes32 domainSeparator = getDomainSeparator();
         
         // Compute the witness hash as it would be in the library
-        witnessHash = computeWitnessHash(permit, witness, witnessTypeString, owner);
+        witnessHash = computeWitnessHash(permit, witness, witnessTypeString, spender);
         
         // Compute the digest that should be signed
         digest = computeDigest(witnessHash, domainSeparator);
