@@ -1,6 +1,7 @@
-require("@nomiclabs/hardhat-ethers");
+require("@nomicfoundation/hardhat-ethers");
 require('@nomicfoundation/hardhat-verify');
 require("hardhat-deploy");
+require("@nomicfoundation/hardhat-chai-matchers");
 require("dotenv").config();
 
 module.exports = {
